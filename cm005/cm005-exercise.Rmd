@@ -91,6 +91,11 @@ gapminder %>%
 
 
 2. Of those, only take data from Asia.
+```{r}
+## select row of the dataframe
+gapminder %>%
+  filter(pop>1000000 && continent=="Asia") ##only show lines with population greater than 100million
+```
 
 ## git stuff (Optional)
 
