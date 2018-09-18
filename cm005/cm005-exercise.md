@@ -22,7 +22,7 @@ library(tidyverse)
 ```
 
 ```
-## -- Attaching packages --------------------------------------------------------------------------- tidyverse 1.2.1 --
+## -- Attaching packages -------------------------------------------------------------------------- tidyverse 1.2.1 --
 ```
 
 ```
@@ -33,7 +33,7 @@ library(tidyverse)
 ```
 
 ```
-## -- Conflicts ------------------------------------------------------------------------------ tidyverse_conflicts() --
+## -- Conflicts ----------------------------------------------------------------------------- tidyverse_conflicts() --
 ## x dplyr::filter() masks stats::filter()
 ## x dplyr::lag()    masks stats::lag()
 ```
@@ -273,6 +273,29 @@ gapminder %>%
 
 2. Of those, only take data from Asia.
 
+```r
+## select row of the dataframe
+gapminder %>%
+  filter(pop>1000000 && continent=="Asia") ##only show lines with population greater than 100million
+```
+
+```
+## # A tibble: 1,704 x 6
+##    country     continent  year lifeExp      pop gdpPercap
+##    <fct>       <fct>     <int>   <dbl>    <int>     <dbl>
+##  1 Afghanistan Asia       1952    28.8  8425333      779.
+##  2 Afghanistan Asia       1957    30.3  9240934      821.
+##  3 Afghanistan Asia       1962    32.0 10267083      853.
+##  4 Afghanistan Asia       1967    34.0 11537966      836.
+##  5 Afghanistan Asia       1972    36.1 13079460      740.
+##  6 Afghanistan Asia       1977    38.4 14880372      786.
+##  7 Afghanistan Asia       1982    39.9 12881816      978.
+##  8 Afghanistan Asia       1987    40.8 13867957      852.
+##  9 Afghanistan Asia       1992    41.7 16317921      649.
+## 10 Afghanistan Asia       1997    41.8 22227415      635.
+## # ... with 1,694 more rows
+```
+
 ## git stuff (Optional)
 
 Knit, commit, push!
@@ -301,6 +324,38 @@ Your task is to use metaprogramming to check whether a response (like the one ab
 # Relational/Comparison and Logical Operators in R
 
 1. Find all entries of Canada and Algeria occuring in the '60s. 
+
+```r
+gapminder %>%
+  filter((country=="Canada"|country=="Algeria") & year>=1960 & year<1970)
+```
+
+```
+## # A tibble: 4 x 6
+##   country continent  year lifeExp      pop gdpPercap
+##   <fct>   <fct>     <int>   <dbl>    <int>     <dbl>
+## 1 Algeria Africa     1962    48.3 11000948     2551.
+## 2 Algeria Africa     1967    51.4 12760499     3247.
+## 3 Canada  Americas   1962    71.3 18985849    13462.
+## 4 Canada  Americas   1967    72.1 20819767    16077.
+```
+
+```r
+gapminder %>%
+  filter(country %in% c("Canada","Algeria"),
+year>=1960,year<1970)
+```
+
+```
+## # A tibble: 4 x 6
+##   country continent  year lifeExp      pop gdpPercap
+##   <fct>   <fct>     <int>   <dbl>    <int>     <dbl>
+## 1 Algeria Africa     1962    48.3 11000948     2551.
+## 2 Algeria Africa     1967    51.4 12760499     3247.
+## 3 Canada  Americas   1962    71.3 18985849    13462.
+## 4 Canada  Americas   1967    72.1 20819767    16077.
+```
+
 
 2. Find all entries of Canada, and entries of Algeria occuring in the '60s. 
 3. Find all entries _not_ including Canada and Algeria.

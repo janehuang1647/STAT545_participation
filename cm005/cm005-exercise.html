@@ -138,12 +138,12 @@ $(document).ready(function () {
 </ol>
 <pre class="r"><code>library(gapminder)
 library(tidyverse)</code></pre>
-<pre><code>## -- Attaching packages --------------------------------------------------------------------------- tidyverse 1.2.1 --</code></pre>
+<pre><code>## -- Attaching packages -------------------------------------------------------------------------- tidyverse 1.2.1 --</code></pre>
 <pre><code>## √ ggplot2 3.0.0     √ purrr   0.2.5
 ## √ tibble  1.4.2     √ dplyr   0.7.6
 ## √ tidyr   0.8.1     √ stringr 1.3.1
 ## √ readr   1.1.1     √ forcats 0.3.0</code></pre>
-<pre><code>## -- Conflicts ------------------------------------------------------------------------------ tidyverse_conflicts() --
+<pre><code>## -- Conflicts ----------------------------------------------------------------------------- tidyverse_conflicts() --
 ## x dplyr::filter() masks stats::filter()
 ## x dplyr::lag()    masks stats::lag()</code></pre>
 <div id="select" class="section level2">
@@ -331,6 +331,23 @@ gapminder %&gt;%
 <ol start="2" style="list-style-type: decimal">
 <li>Of those, only take data from Asia.</li>
 </ol>
+<pre class="r"><code>## select row of the dataframe
+gapminder %&gt;%
+  filter(pop&gt;1000000 &amp;&amp; continent==&quot;Asia&quot;) ##only show lines with population greater than 100million</code></pre>
+<pre><code>## # A tibble: 1,704 x 6
+##    country     continent  year lifeExp      pop gdpPercap
+##    &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
+##  1 Afghanistan Asia       1952    28.8  8425333      779.
+##  2 Afghanistan Asia       1957    30.3  9240934      821.
+##  3 Afghanistan Asia       1962    32.0 10267083      853.
+##  4 Afghanistan Asia       1967    34.0 11537966      836.
+##  5 Afghanistan Asia       1972    36.1 13079460      740.
+##  6 Afghanistan Asia       1977    38.4 14880372      786.
+##  7 Afghanistan Asia       1982    39.9 12881816      978.
+##  8 Afghanistan Asia       1987    40.8 13867957      852.
+##  9 Afghanistan Asia       1992    41.7 16317921      649.
+## 10 Afghanistan Asia       1997    41.8 22227415      635.
+## # ... with 1,694 more rows</code></pre>
 </div>
 <div id="git-stuff-optional" class="section level2">
 <h2>git stuff (Optional)</h2>
@@ -357,9 +374,30 @@ if (my_commute &gt; 30) {
 <div id="relationalcomparison-and-logical-operators-in-r" class="section level1">
 <h1>Relational/Comparison and Logical Operators in R</h1>
 <ol style="list-style-type: decimal">
-<li><p>Find all entries of Canada and Algeria occuring in the ’60s.</p></li>
+<li>Find all entries of Canada and Algeria occuring in the ’60s.</li>
+</ol>
+<pre class="r"><code>gapminder %&gt;%
+  filter((country==&quot;Canada&quot;|country==&quot;Algeria&quot;) &amp; year&gt;=1960 &amp; year&lt;1970)</code></pre>
+<pre><code>## # A tibble: 4 x 6
+##   country continent  year lifeExp      pop gdpPercap
+##   &lt;fct&gt;   &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
+## 1 Algeria Africa     1962    48.3 11000948     2551.
+## 2 Algeria Africa     1967    51.4 12760499     3247.
+## 3 Canada  Americas   1962    71.3 18985849    13462.
+## 4 Canada  Americas   1967    72.1 20819767    16077.</code></pre>
+<pre class="r"><code>gapminder %&gt;%
+  filter(country %in% c(&quot;Canada&quot;,&quot;Algeria&quot;),
+year&gt;=1960,year&lt;1970)</code></pre>
+<pre><code>## # A tibble: 4 x 6
+##   country continent  year lifeExp      pop gdpPercap
+##   &lt;fct&gt;   &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
+## 1 Algeria Africa     1962    48.3 11000948     2551.
+## 2 Algeria Africa     1967    51.4 12760499     3247.
+## 3 Canada  Americas   1962    71.3 18985849    13462.
+## 4 Canada  Americas   1967    72.1 20819767    16077.</code></pre>
+<ol start="2" style="list-style-type: decimal">
 <li>Find all entries of Canada, and entries of Algeria occuring in the ’60s.</li>
-<li><p>Find all entries <em>not</em> including Canada and Algeria.</p></li>
+<li>Find all entries <em>not</em> including Canada and Algeria.</li>
 </ol>
 </div>
 <div id="bonus-exercises" class="section level1">
