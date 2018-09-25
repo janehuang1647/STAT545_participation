@@ -230,6 +230,24 @@ Try a scatterplot with:
 -   `geom_density2d()`
 -   `geom_smooth()`
 
+``` r
+gvsl+geom_hex()
+```
+
+![](cm007-exercise_files/figure-markdown_github/unnamed-chunk-16-1.png)
+
+``` r
+gvsl+geom_density_2d()
+```
+
+![](cm007-exercise_files/figure-markdown_github/unnamed-chunk-16-2.png)
+
+``` r
+gvsl+geom_point()+geom_smooth(method="lm")
+```
+
+![](cm007-exercise_files/figure-markdown_github/unnamed-chunk-16-3.png)
+
 Bar plots
 ---------
 
@@ -237,7 +255,16 @@ How many countries are in each continent? Use the year 2007.
 
 1.  After filtering the gapminder data to 2007, make a bar chart of the number of countries in each continent. Store everything except the geom in the variable `d`.
 
-2.  Notice the y-axis. Oddly, `ggplot2` doesn't make it obvious how to change to proportion. Try adding a `y` aesthetic: `y=..count../sum(..count..)`.
+``` r
+gapminder %>% 
+  filter(year == 2007) %>% 
+  ggplot(aes(x=continent))+
+  geom_bar()
+```
+
+![](cm007-exercise_files/figure-markdown_github/unnamed-chunk-17-1.png)
+
+1.  Notice the y-axis. Oddly, `ggplot2` doesn't make it obvious how to change to proportion. Try adding a `y` aesthetic: `y=..count../sum(..count..)`.
 
 **Uses of bar plots**: Get a sense of relative quantities of categories, or see the probability mass function of a categorical random variable.
 
@@ -245,6 +272,12 @@ Polar coordinates
 -----------------
 
 -   Add `coord_polar()` to a scatterplot.
+
+``` r
+gvsl+geom_point()+coord_polar()
+```
+
+![](cm007-exercise_files/figure-markdown_github/unnamed-chunk-18-1.png)
 
 Want more practice?
 ===================
@@ -260,7 +293,7 @@ ggplot(gapminder,aes(year, lifeExp))+
   geom_abline( colour = "red")
 ```
 
-![](cm007-exercise_files/figure-markdown_github/unnamed-chunk-16-1.png)
+![](cm007-exercise_files/figure-markdown_github/unnamed-chunk-19-1.png)
 
 **Exercise 2**: Repeat Exercise 1, but switch the *regression line* and *geom\_point* layers. How is this plot different from that of Exercise 1?
 
@@ -274,7 +307,7 @@ ggplot(gapminder,aes(year,lifeExp))+
   facet_wrap(~continent)
 ```
 
-![](cm007-exercise_files/figure-markdown_github/unnamed-chunk-17-1.png)
+![](cm007-exercise_files/figure-markdown_github/unnamed-chunk-20-1.png)
 
 **Exercise 5**: Plot the population over time (year) using lines, so that each country has its own line. Colour by `gdpPercap`. Add alpha transparency to your liking.
 

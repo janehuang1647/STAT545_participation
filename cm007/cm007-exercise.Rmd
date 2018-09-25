@@ -178,7 +178,7 @@ Try a scatterplot with:
 ```{r}
 gvsl+geom_hex()
 gvsl+geom_density_2d()
-gvsl+geom_point()+geom_smooth((method="lm"))
+gvsl+geom_point()+geom_smooth(method="lm")
 ```
 
 
