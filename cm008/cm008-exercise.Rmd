@@ -8,6 +8,7 @@ editor_options:
 ```{r}
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(gapminder))
+
 ```
 
 ## `mutate()`
@@ -18,6 +19,9 @@ Let's get:
 - GDP in billions, named (`gdpBill`), rounded to two decimals.
 
 ```{r}
+gapminder %>% 
+  mutate(gdp = pop * gdpPercap)
+
 
 ```
 
@@ -27,7 +31,8 @@ Notice the backwards compatibility! No need for loops!
 Try the same thing, but with `transmute` (drops all other variables). 
 
 ```{r}
-
+  gapminder %>% 
+  transmute(gdp= pop * gdpPercap)
 ```
 
 The `if_else` function is useful for changing certain elements in a data frame.
@@ -53,6 +58,10 @@ Use `summarize()` to compute the mean and median life expectancy using all entri
 
 ```{r}
 
+gapminder %>%
+  summarize(avg_lifeExp = mean(lifeExp),median_lifeExp =median(lifeExp))
+
+
 ```
 
 Do the same thing, but try:
@@ -61,6 +70,14 @@ Do the same thing, but try:
 2. grouping by continent and country
 
 ```{r}
+gapminder %>%
+  group_by(country) %>% 
+  summarize(avg_lifeExp = mean(lifeExp),median_lifeExp =median(lifeExp))
+
+gapminder %>%
+  group_by(country,continent) %>% 
+  summarize(avg_lifeExp = mean(lifeExp),median_lifeExp =median(lifeExp))
+
 
 ```
 
@@ -73,7 +90,9 @@ Question: What if I wanted to keep the other numeric columns (gdpPercap, pop)? C
 For each continent: What is the smallest country-wide median GDP per capita?
 
 ```{r}
-
+gapminder %>%
+  select(gdpPercap,country) %>% 
+  arrange(gdpPercap, country)
 ```
 
 Note that ggplot2's grouping is different from dplyr's! Try making a spaghetti plot of lifeExp over time for each coutry, by piping in a grouped data frame -- it won't work:
