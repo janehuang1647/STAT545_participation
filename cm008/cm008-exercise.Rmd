@@ -19,9 +19,11 @@ Let's get:
 - GDP in billions, named (`gdpBill`), rounded to two decimals.
 
 ```{r}
-gapminder %>% 
-  mutate(gdp = pop * gdpPercap)
-
+## mutate() is used to add a new column round() is round it to 2 decimal
+temp <- gapminder %>% 
+  mutate(gdp = gdpPercap * pop,
+         gdpBill = round(gdp/10^9,2))
+knitr::kable(temp)
 
 ```
 
@@ -31,15 +33,25 @@ Notice the backwards compatibility! No need for loops!
 Try the same thing, but with `transmute` (drops all other variables). 
 
 ```{r}
-  gapminder %>% 
-  transmute(gdp= pop * gdpPercap)
+gapminder %>% 
+  transmute(gdp = gdpPercap * pop,
+         gdpBill = round(gdp/10^9,2))
+
 ```
 
 The `if_else` function is useful for changing certain elements in a data frame.
 
 Example: Suppose Canada's 1952 life expectancy was mistakenly entered as 68.8 in the data frame, but is actually 70. Fix it using `if_else` and `mutate`. 
 
-```{r}
+```{r,results='hold'}
+##hold all the output pieces and push them to the end of a chunk
+
+if_else(letters == "h", "H", letters)
+## this is replacing h with H
+temp <- gapminder %>%
+  mutate(lifeExp = if_else(country == "Canada" & year == 1952, 70, lifeExp)) %>% 
+  filter(country == "Canada")
+knitr::kable(temp)
 
 ```
 
@@ -47,6 +59,9 @@ Example: Suppose Canada's 1952 life expectancy was mistakenly entered as 68.8 in
 Your turn: Make a new column called `cc` that pastes the country name followed by the continent, separated by a comma. (Hint: use the `paste` function with the `sep=", "` argument).
 
 ```{r}
+temp<- gapminder %>% 
+  mutate(cc=paste(country, continent,sep=","))
+knitr::kable(temp)
 
 ```
 
@@ -57,11 +72,9 @@ These functions we've seen are called __vectorized functions__.
 Use `summarize()` to compute the mean and median life expectancy using all entries:
 
 ```{r}
-
 gapminder %>%
-  summarize(avg_lifeExp = mean(lifeExp),median_lifeExp =median(lifeExp))
-
-
+  summarize(avg_lifeExp = mean(lifeExp),
+            median_lifeExp =median(lifeExp))
 ```
 
 Do the same thing, but try:
@@ -72,11 +85,22 @@ Do the same thing, but try:
 ```{r}
 gapminder %>%
   group_by(country) %>% 
-  summarize(avg_lifeExp = mean(lifeExp),median_lifeExp =median(lifeExp))
+  summarize(avg_lifeExp = mean(lifeExp),
+            median_lifeExp =median(lifeExp))
+
+
+gapminder %>%
+  group_by(continent) %>% 
+  summarize(avg_lifeExp = mean(lifeExp),
+            median_lifeExp =median(lifeExp))
+
+gapminder %>% 
+  group_by(continent, country)
 
 gapminder %>%
   group_by(country,continent) %>% 
-  summarize(avg_lifeExp = mean(lifeExp),median_lifeExp =median(lifeExp))
+  summarize(avg_lifeExp = mean(lifeExp),
+            median_lifeExp =median(lifeExp))
 
 
 ```
@@ -90,21 +114,45 @@ Question: What if I wanted to keep the other numeric columns (gdpPercap, pop)? C
 For each continent: What is the smallest country-wide median GDP per capita?
 
 ```{r}
-gapminder %>%
-  select(gdpPercap,country) %>% 
-  arrange(gdpPercap, country)
+
+## smallest country-wide median GDP per capita
+gapminder %>% 
+  group_by(continent,country) %>% 
+  summarize(md = median(gdpPercap))
+
+## the smallest GDP per capita within each continent
+gapminder %>% 
+  group_by(continent,country) %>% 
+  summarize(md = median(gdpPercap)) %>% 
+  summarize(min=min(md))
+
 ```
 
 Note that ggplot2's grouping is different from dplyr's! Try making a spaghetti plot of lifeExp over time for each coutry, by piping in a grouped data frame -- it won't work:
 
 ```{r}
-
+gapminder %>% 
+  group_by(country) %>% 
+  ggplot(aes(lifeExp,year))+
+  geom_line()
 ```
 
 
 Your turn! For each continent, what is the median GDP per capita of countries with high (>60) life expectancy vs countries with low (<=60)? Sort this data frame by median GDP per capita.
 
 ```{r}
+gapminder %>%
+  group_by(country,lifeExp>60) %>% 
+  summarize(md=median(gdpPercap)) %>% 
+  arrange(md)
+
+## insert an column to state the high and low level of lifeExp, when lifeExp>60 indicate high orelse indicate low
+gapminder %>% 
+  mutate(age = if_else(lifeExp > 60,"high","low")) %>% 
+  group_by(continent, age) %>% 
+  summarise(md = median(gdpPercap)) %>% 
+  arrange(md)
+
 
 ```
 
@@ -121,6 +169,16 @@ Convenience functions:
 n_distinct: How many years of record does each country have?
 
 ```{r}
+## count thw number of record in each continent
+gapminder %>% 
+  group_by(continent) %>% 
+ # summarize(n=n())
+  tally()
+
+gapminder %>% 
+  count(continent)
+
+
 
 ```
 
@@ -144,6 +202,13 @@ Calculate the growth in population since the first year on record _for each coun
 
 ```{r}
 
+gapminder %>% 
+  group_by(country) %>% 
+  mutate(growth = pop - first(pop))   ## compare it within the group
+
+gapminder %>%
+  group_by(country) %>% 
+  mutate(change =pop - lag(pop))   ## do the same things  find the difference between each entry with the first one
 ```
 
 Notice that `dplyr` has retained the original grouping.
@@ -152,12 +217,18 @@ How about growth compared to `1972`?
 
 ```{r}
 
+gapminder %>% 
+  group_by(country) %>% 
+  mutate(change= pop-pop[year== 1972])
+
 ```
 
 Make a new variable `pop_last_time`, as the "lag-1" population -- that is, the population from the previous entry of that country. Use the `lag` function.
 
 ```{r}
-
+gapminder %>% 
+  group_by(country) %>% 
+  mutate(pop_last_time= pop-lag(pop,1))
 ```
 
 Similar: `lead` function.
@@ -171,6 +242,15 @@ Your turn: Use what we learned to answer the following questions.
 1. Determine the country that experienced the sharpest 5-year drop in life expectancy, in each continent.
 
 ```{r}
+##filter out the entry which has no gain results using the !is.na(gain)
+## 2 min() function is used to get the sharpest drop in each ontinent
+gapminder %>% 
+  group_by(continent,country) %>% 
+  mutate(gain=lag(lifeExp)-lifeExp) %>% 
+  filter(!is.na(gain)) %>% 
+  summarize(min=min(gain)) %>% 
+  summarize(min=min(min)) %>% 
+  arrange(min)
 
 ```
 
