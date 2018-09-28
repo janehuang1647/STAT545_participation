@@ -1,8 +1,7 @@
 ---
 title: "cm008 Exercises"
 output: github_document
-editor_options: 
-  chunk_output_type: inline
+
 ---
 
 ```{r}
