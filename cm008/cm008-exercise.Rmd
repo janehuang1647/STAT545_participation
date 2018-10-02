@@ -22,7 +22,7 @@ Let's get:
 temp <- gapminder %>% 
   mutate(gdp = gdpPercap * pop,
          gdpBill = round(gdp/10^9,2))
-knitr::kable(temp)
+#knitr::kable(temp)
 
 ```
 
@@ -256,7 +256,6 @@ gapminder %>%
 2. Compute the relative gdp (NOT per capita!) of each country compared to Canada (= GDP of a country / GDP of Canada).
 
 ```{r}
-
 ## GDP of canada
 cda <- gapminder %>% 
   mutate(gdp=gdpPercap* pop) %>% 
