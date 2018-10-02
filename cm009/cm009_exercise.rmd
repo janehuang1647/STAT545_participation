@@ -1,6 +1,6 @@
 ---
 title: "cm009 Exercises: tidy data"
-output:github_document
+output: github_document
 editor_options: 
   chunk_output_type: inline
 ---
