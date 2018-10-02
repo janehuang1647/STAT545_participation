@@ -83,12 +83,25 @@ lotr_untidy <- bind_rows(lotr1,lotr2,lotr3)
 ```{r}
 ## group female and male as a group of gender and put the value of these corresponding gender as "word"
 gather(lotr_untidy,key = "Gender", value="Word", Female, Male)
+
+## or
+gather(lotr_untidy,key = "Gender", value="Word", Female:Male)
+
+## since both "male" and "female" contain the string "ale"
+gather(lotr_untidy,key = "Gender", value="Word", contains("ale"))
 ```
 
 3. Try again (bind and tidy the three untidy data frames), but without knowing how many tables there are originally. 
     - The additional work here does not require any additional tools from the tidyverse, but instead uses a `do.call` from base R -- a useful tool in data analysis when the number of "items" is variable/unknown, or quite large. 
 
 ```{r}
+lotr_list <- list(lotr1,lotr2,lotr3)
+lotr_list
+## each element as a data frame
+
+## combine all the list
+## do.call(f,l) where f(l1,l2,l3) we dont need to know how many elements in the f function.
+do.call(bind_rows,lotr_list)
 
 ```
 
@@ -107,13 +120,21 @@ lotr_tidy <- read_csv("https://raw.githubusercontent.com/jennybc/lotr-tidy/maste
 Get word counts across "Race". Then try "Gender". 
 
 ```{r}
-
+## spread the race column, and the value below the separated column will be the words
+## opposite of the "gather" function
+spread(lotr_tidy, key="Race",value="Words")
 ```
 
 Now try combining race and gender. Use `unite()` from `tidyr` instead of `paste()`. 
 
 ```{r}
+lotr_tidy %>% 
+unite(race_gender,Race,Gender) %>%  ## make the new column to be combination of race and gender
+spread(lotr_tidy, key="race_gender",value = "Words")
 
+lotr_tidy %>% 
+  mutate(x=rnorm(nrow(lotr_tidy))) %>% 
+  spread(key="Gender",value="x")
 ```
 
 ## Other `tidyr` goodies
@@ -123,13 +144,46 @@ Check out the Examples in the documentation to explore the following.
 `expand` vs `complete` (trim vs keep everything). Together with `nesting`. Check out the Examples in the `expand` documentation.
 
 ```{r}
+expand(mtcars, vs, cyl)
+# All possible combinations of vs & cyl, even those that aren't
+# present in the data
+
+# Only combinations of vs and cyl that appear in the data
+expand(mtcars, nesting(vs, cyl))
+
+
+df <- tibble(
+  year   = c(2010, 2010, 2010, 2010, 2012, 2012, 2012),
+  qtr    = c(   1,    2,    3,    4,    1,    2,    3),
+  return = rnorm(7)
+)
+
+
+df %>% expand(year, qtr)
+df %>% expand(year = 2010:2012, qtr)
+df %>% expand(year = full_seq(year, 1), qtr)
+
+## it keeps all the data, even though there is no observations on 2011 the return will show NA in these observations. 
+df %>% complete(year = full_seq(year, 1), qtr)
+
+experiment <- tibble(
+  name = rep(c("Alex", "Robert", "Sam"), c(3, 2, 1)),
+  trt  = rep(c("a", "b", "a"), c(3, 2, 1)),
+  rep = c(1, 2, 3, 1, 2, 1),
+  measurment_1 = runif(6),
+  measurment_2 = runif(6)
+)
+experiment %>% 
+  expand(nesting(name,trt),rep)
 
 ```
 
 `separate_rows`: useful when you have a variable number of entries in a "cell".
 
 ```{r}
-
+library(dplyr)
+df <- data.frame(x = c(NA, "a.b", "a.d", "b.c"))
+df %>% separate(x, c("A", "B"))
 ```
 
 `unite` and `separate`.
@@ -141,7 +195,9 @@ Check out the Examples in the documentation to explore the following.
 `uncount` (as the opposite of `dplyr::count()`)
 
 ```{r}
-
+df <- tibble::tibble(x = c("a", "b"), n = c(1, 2))
+uncount(df, n)
+uncount(df, n, .id = "id")
 ```
 
 
@@ -154,7 +210,8 @@ Check out the Examples in the documentation to explore the following.
 `fill`
 
 ```{r}
-
+df <- data.frame(Month = 1:12, Year = c(2000, rep(NA, 11)))
+df %>% fill(Year)
 ```
 
 
