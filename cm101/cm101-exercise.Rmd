@@ -1,6 +1,6 @@
 ---
 title: "STAT 547 Class Meeting 01: Writing your own Functions"
-output: html_notebook
+output: github_document
 editor_options: 
   chunk_output_type: inline
 ---
