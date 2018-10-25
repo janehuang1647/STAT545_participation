@@ -8,7 +8,8 @@ editor_options:
 ```{r}
 library(gapminder)
 library(tidyverse)
-library(testthat)
+suppressPackageStartupMessages(library(testthat))
+
 ```
 
 This worksheet is a condensed version of Jenny's stat545.com functions [part1](http://stat545.com/block011_write-your-own-function-01.html), [part2](http://stat545.com/block011_write-your-own-function-02.html), and [part3](http://stat545.com/block011_write-your-own-function-03.html).
