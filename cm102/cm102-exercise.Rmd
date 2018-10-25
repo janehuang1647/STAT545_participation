@@ -224,10 +224,10 @@ str_subset(countries,pattern="a.a.a")
 Let's define a handy function:
 
 ```{r}
-# str_view_all_match <- function(countries, pattern) {
-#     str_view_all(countries, pattern, match=TRUE)
-# }
-# str_view_all_match(countries, pattern = "i.a")
+ str_view_all_match <- function(countries, pattern) {
+     str_view_all(countries, pattern, match=TRUE)
+ }
+ str_view_all_match(countries, pattern = "i.a")
 ```
 
 
@@ -303,7 +303,7 @@ str_view_all_match(countries, "e{2}")
 Exercise: Find all countries that have either "a" or "e", twice in a row (with a changeover allowed, such as "ae" or "ea"):
 
 ```{r}
-str_view_all_match(countries, pattern="YOUR_REGEX_HERE")
+str_view_all_match(countries, pattern="(a|e){2}")
 ```
 
 
@@ -328,7 +328,7 @@ str_view_all_match(countries, pattern = "^Ca")
 Countries without a vowel? The word should start with a non-vowel, continue as a non-vowel, and end:
 
 ```{r}
-str_view_all_match(countries, "^[^aeiouAEIOU]*$")
+str_view_all_match(countries, "^[^aeiouAEIOU]*$") ## staring with a non-vowel * means 0 or more characters before
 ```
 
 ### Groups
@@ -336,20 +336,24 @@ str_view_all_match(countries, "^[^aeiouAEIOU]*$")
 We can refer to parentheses groups:
 
 ```{r}
-str_view_all(c("abad", "abbd"), pattern="(a)(b)\\1")
-str_view_all(c("abad", "abbd"), pattern="(a)(b)\\2")
+str_view_all(c("abad", "abbd"), pattern="(a)(b)\\1")  # want whatever results in group one
+str_view_all(c("abad", "abbd"), pattern="(a)(b)\\2") # a followed by b and whatever in group 2 of the third element
 ```
 
 Note that the parentheses are first resolved, THEN referred to. NOT re-executed.
 
 ```{r}
-str_view_all(c("bananas"), "(.)(.)\\1\\2.*\\1\\2")
+str_view_all(c("bananas"), "(.)(.)\\1\\2.*\\1\\2")    # anythings follow by anything, then repeat the first group and then the second group and anything in between
 ```
 
 We can refer to them later in the search, too:
 
 ```{r}
-str_view_all(c("bananas", "Who can? Bananas can."), "(.)(.)\\1\\2.*\\1\\2")
+str_view_all(c("bananas", "Who can? Bananas can."), "(.)(.)\\1\\2.*\\1\\2") 
+                                                    # a  n   a  n .. a  n
+#  .* means any number of anything
+
+# . means it can takes anything and so for the banana examples,  first group we can fit in a and second group we can fit in n and \\1 followed by group 1 will be a and \\2 followed by group 2 will be n.
 ```
 
 
