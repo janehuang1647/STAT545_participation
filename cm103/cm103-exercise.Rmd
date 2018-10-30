@@ -1,6 +1,6 @@
 ---
 title: "cm103 Worksheet"
-output: html_notebook
+output: github_document
 editor_options: 
   chunk_output_type: inline
 ---
@@ -28,7 +28,7 @@ In addition:
 
 Vectors: 
 
-- hold multiple entries of the same type.
+- hold multiple entries of the __same type__.
 - coerced to the least-informative data type in the vector.
 - subset with single square brackets
 
@@ -37,6 +37,7 @@ Lists:
 - hold multiple entries of anything.
 - no entries are coerced (as a result of being able to hold anything)
 - subset with `[`, `[[`, or `$`. 
+- `[` means i would like to have the list, `[[` means i would like to have the content of the list.
 
 ## Review Vectorization
 
@@ -49,7 +50,7 @@ Examples:
 ```
 
 ```{r}
-(1:10) * (1:2)
+(1:10) * (1:2)  # cycling (LHS should be equal length to RHS)
 ```
 
 ```{r}
@@ -70,7 +71,14 @@ Example:
 2. Use what you know about R to write code that extracts a vector of the first elements of each vector contained in `wesanderson`.
 
 ```{r}
-YOUR_CODE_HERE
+str(wesanderson)
+
+x <-  character(0)
+
+for (i in 1: length(wesanderson))
+    x[i] <- wesanderson[[i]][1]   # subsetting to get the content of the vector
+
+x
 ```
 
 `str()` is not always useful! Try checking the structure of `got_chars` (= Game of Thrones characters):
@@ -83,13 +91,16 @@ str(got_chars)
 ## Exploring lists
 
 1. `str()`: embrace `list.len` and `max.level`
-
+# `list.len`tell us how long the list we wanna view
+# `max.level` only show us thet top # level. such as we only want to see the section but not the subsubsection. 
 ```{r}
-str(got_chars)
+str(got_chars,list.len = 4, max.level = 1)
+
+str(got_chars[[1]])
 ```
 
 2. Interactive exploration: `View()` and `listviewer::jsonedit(..., mode = "view")`
-
+# useful for nested structure data
 ```{r}
 View(got_chars)
 jsonedit(got_chars, mode="view")
@@ -118,25 +129,37 @@ Toy example 1: without using vectorization, take the square root of the followin
 
 ```{r}
 x <- 1:10
-map(FILL_THIS_IN, FILL_THIS_IN)
+sqrt(x) # automactically vectorize
+map(x, sqrt)  # map ALWAYS output a LIST. 
 ```
 
 Toy example 2 (functions on-the-fly): without using vectorization, square each component of `x`:
 
 ```{r}
-map(FILL_THIS_IN, FILL_THIS_IN)
+square <- function (y){
+  y^2
+}
+map(x, square)
+
+
+##OR
+map(x,function(w) w^2)
+
+
+
 ```
 
 Want a vector to be returned? Must specify the `typeof()` of the vector. Use `map_dbl()` to specify an output vector of type "double" for the above (check out the documentation `?map` for the acceptable vector types):
 
 ```{r}
-map_dbl(x, sqrt)
+map_dbl(x, sqrt)  # with this we are constructing a vector-typed double
+map_chr(x, sqrt)   # with this we are constructing a vector-typed characters
 ```
 
 Does your function have other arguments? You can specify them afterwards in the ellipses (`...`).
 
 ```{r}
-map_chr(x, str_c, "potato.", sep="-")
+map_chr(x, str_c, "potato.", sep="-")  # str_c Join multiple strings into a single string
 ```
 
 ## Your Turn: `purrr` fundamentals
@@ -147,7 +170,16 @@ map_chr(x, str_c, "potato.", sep="-")
     - Use the ` ``[`` ` function if you're feeling daring.
 
 ```{r}
-YOUR_CODE_HERE
+## method 1
+vec1 <- function(x) x[1]
+map_chr(wesanderson,vec1)
+
+## method 2: head function
+map_chr(wesanderson,head, n=1)  # only subseting the first element (by default, n = 6)
+# map_dbl(wesanderson,head, n=1) can not tranfer to a double
+
+## method 3
+map_chr(wesanderson,`[`,1 )  # `[`-- subseting x to the first element    `[` means x[1]
 ```
 
 2. Check that each character's list entry in `got_chars` has the same names as everyone else (that is, list component names, not character names). Here's one way to do it:
@@ -168,7 +200,7 @@ We can do the subsetting much easier with these shortcuts: just replace function
 - name you'd like to subset by.
 
 ```{r}
-map_chr(wesanderson, 1) # %>% unname()
+map_chr(wesanderson, 1) %>% unname()   # this takes out the name of the vector
 ```
 
 
@@ -183,7 +215,14 @@ map_chr(wesanderson, 1) # %>% unname()
 Note: each character's list entry has a component named `titles` as the 9th entry.
 
 ```{r}
-YOUR_CODE_HERE
+got_chars %>%   # subset according to "titles" elements
+  map("titles")
+
+got_chars %>% 
+  map(9)  # the 9th element is titles so it is the same as above.
+
+
+
 ```
 
 2. For the `got_chars` data:
@@ -194,17 +233,35 @@ YOUR_CODE_HERE
 
 ```{r}
 desired_info <- c("name", "born")
+map(got_chars, `[`, desired_info) %>% 
+  head() # only getting the first vector
+## or
+map_dfr(got_chars,`[`, desired_info)  # list everything in the data frame
 ```
 
 Note: as Jenny says, it's always safer (from a programming perspective) to work with output that's more predictable. The following would be safer, and is still readable:
 
 ```{r}
 got_chars %>% {
+  
     tibble(
-        name = map_chr(., "name"),
+        name = map_chr(., "name"),   # . means whatever element to the left of %>% 
         born = map_chr(., "born")
     )
 }
+
+## compare
+
+got_chars %>% 
+    tibble(
+        name = map_chr(., "name"),   # . means whatever element to the left of %>% 
+        born = map_chr(., "born")
+    )
+# this is giving us a three column lists  it will make got_chars as a own column but with a curly braces, this column can be avoided. (check  ?`}` for more information)
+
+# in the curly bracket, it only return the execution of the last line. 
+
+
 ```
 
 Note the curly braces "tricks" the object prior to the pipe from entering as the first argument to `tibble`, because ` ``{`` ` only returns the last line evaluated. In this case there are two: the above code is equivalent to
