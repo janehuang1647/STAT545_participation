@@ -228,10 +228,14 @@ icecream %>%
 
 ## Nesting/Unnesting: Your Turn
 
-`unnest()` the `got_alias` tibble. Hint: there should be a hiccup. Check out the `str()`ucture of `got_alias` -- are all elements of the list column vectors? Would using `tidyr::drop_na()` be a good idea here?
+`unnest()` the `got_alias` tibble. Hint: there should be a hiccup. Check out the `str()`ucture of `got_alias` -- are all elements of the list column vectors? Would using `tidyr::drop_na()` be a good idea here?  ---- drop all the enrty with NA
 
 ```{r}
-FILL_THIS_IN
+
+str(got_alias)
+got_alias %>% 
+  drop_na() %>% 
+  unnest()
 ```
 
 We can also do the opposite with `tidyr::nest()`. Try it with the `iris` data frame:
@@ -240,7 +244,9 @@ We can also do the opposite with `tidyr::nest()`. Try it with the `iris` data fr
 2. `nest()`!
 
 ```{r}
-FILL_THIS_IN
+iris %>% 
+  group_by(Species) %>% 
+  nest()
 ```
 
 Keep the nested `iris` data frame above going! Keep piping:
@@ -265,7 +271,13 @@ If time remains, here is a good exercise to put everything together.
 Let's give it a try:
 
 ```{r}
-
+iris %>%
+  group_by(Species) %>% 
+  nest() %>%            
+  mutate(n = c(2, 5, 3)) %>% 
+  mutate(samp = map2(data, n, sample_n)) %>% 
+  select(Species, samp) %>%
+  unnest()
 ```
 
 
