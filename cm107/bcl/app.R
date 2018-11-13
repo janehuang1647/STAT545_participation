@@ -35,12 +35,18 @@ titlePanel("BC Liquor price app",
 sidebarLayout(
   sidebarPanel("This text is in the sidebar."),
   mainPanel(
-    plotOutput("price_hist"))
+    plotOutput("price_hist"),
+    plotOutput("plot2"),
+    tableOutput("NEWTABLE")
+    )
 ))
  
 # Define server logic required to draw a histogram
 server <- function (input,output){
   output$price_hist <- renderPlot(ggplot2::qplot(bcl$Price))
+  output$plot2 <- renderPlot(ggplot2::qplot(bcl$Price))  # can be other plot functions
+  
+  output$NEWTABLE <- renderTable(bcl)
 } 
 
 # Run the application 
