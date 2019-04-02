@@ -1,7 +1,7 @@
 # stat545_md_explorer
 A repository for exploring version control and markdown
 
-new description
 
-TESTING TESTING TESTING
-I AM MASTER
+## This is the Repository for SRAR545 Participation 
+
+
